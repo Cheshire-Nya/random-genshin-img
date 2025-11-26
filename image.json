@@ -1,28 +1,326 @@
 {
-    "category1": {
-      "mobile": [
-        "demoimg/1.jpg",
-        "1.jpg",
-        "示例图/1.jpg"
-      ],
-      "pc": [
-        "demoimg/2.jpg",
-        "2.jpg",
-        "示例图/2.jpg"
-      ]
-    },
-    "category2": {
-      "mobile": [
-        "demoimg/3.jpg",
-        "demoimg/4.jpg",
-        "demoimg/5.jpg",
-        "示例图/3.jpg",
-        "示例图/4.jpg"
-      ],
-      "pc": [
-        "示例图/5.jpg",
-        "示例图/6.jpg",
-        "示例图/7.jpg"
-      ]
-    }
+	"nahida_01": {
+    "src": "纳西妲/1.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+	"nahida_02": {
+    "src": "纳西妲/2.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+	"nahida_03": {
+    "src": "纳西妲/3.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+	"nahida_04": {
+    "src": "纳西妲/4.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_05": {
+    "src": "纳西妲/5.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_06": {
+    "src": "纳西妲/6.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_07": {
+    "src": "纳西妲/7.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_08": {
+    "src": "纳西妲/8.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_09": {
+    "src": "纳西妲/9.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_10": {
+    "src": "纳西妲/10.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile", "pc"]
+  },
+  	"nahida_11": {
+    "src": "纳西妲/12.png",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_12": {
+    "src": "纳西妲/13.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["pc"]
+  },
+  	"nahida_13": {
+    "src": "纳西妲/14.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile", "pc"]
+  },
+  	"nahida_14": {
+    "src": "纳西妲/15.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_15": {
+    "src": "纳西妲/16.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_16": {
+    "src": "纳西妲/17.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_17": {
+    "src": "纳西妲/18.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_18": {
+    "src": "纳西妲/19.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_19": {
+    "src": "纳西妲/20.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile", "pc"]
+  },
+  	"nahida_20": {
+    "src": "纳西妲/23.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_21": {
+    "src": "纳西妲/24.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_22": {
+    "src": "纳西妲/25.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_23": {
+    "src": "纳西妲/26.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_24": {
+    "src": "纳西妲/27.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_25": {
+    "src": "纳西妲/28.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile", "pc"]
+  },
+  	"nahida_26": {
+    "src": "纳西妲/29.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile", "pc"]
+  },
+  	"nahida_27": {
+    "src": "纳西妲/30.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_28": {
+    "src": "纳西妲/31.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_29": {
+    "src": "纳西妲/32.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_30": {
+    "src": "纳西妲/33.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_31": {
+    "src": "纳西妲/34.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_32": {
+    "src": "纳西妲/35.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["pc"]
+  },
+  	"nahida_33": {
+    "src": "纳西妲/101533407_p0.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_34": {
+    "src": "纳西妲/Nahida_101290312.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+    "nahida_35": {
+    "src": "纳西妲/Nahida_101772766.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["pc"]
+  },
+	"nahida_36": {
+    "src": "纳西妲/nahida_102255401.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+	"nahida_37": {
+    "src": "纳西妲/ええ！ナヒダちゃんが！_102280854.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+	"nahida_39": {
+    "src": "纳西妲/スメール_100639369.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+	"nahida_40": {
+    "src": "纳西妲/ナヒーダ 🍀_100227431.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_41": {
+    "src": "纳西妲/ナヒーダ_100315507.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_42": {
+    "src": "纳西妲/ナヒーダ_101460171.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_43": {
+    "src": "纳西妲/ナヒーダ_101606262.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_44": {
+    "src": "纳西妲/ナヒーダ_102554664.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_45": {
+    "src": "纳西妲/ナヒーダ_102670828.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_46": {
+    "src": "纳西妲/ナヒーダ_103373972.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+   	"nahida_47": {
+    "src": "纳西妲/ナヒーダちゃん_100157335.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+  	"nahida_48": {
+    "src": "纳西妲/ナヒーダちゃん_102511300.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+    "nahida_49": {
+    "src": "纳西妲/ナヒーダちゃんまた描いた_101188278.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+    "nahida_50": {
+    "src": "纳西妲/🪁～～_102796455.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["pc"]
+  },
+    "nahida_51": {
+    "src": "纳西妲/草神吃瓜_100456817.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile", "pc"]
+  },
+    "nahida_52": {
+    "src": "纳西妲/纳西妲_100185998.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+    "nahida_53": {
+    "src": "纳西妲/私たちはさっき、世界を救ったのよね？_102626795.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile", "pc"]
+  },
+    "nahida_54": {
+    "src": "纳西妲/无题_101123216.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
+    "nahida_55": {
+    "src": "纳西妲/無題_102450564.jpg",
+	"repo": "default",
+    "category": ["二次元","原神","纳西妲"],
+    "device": ["mobile"]
+  },
 }

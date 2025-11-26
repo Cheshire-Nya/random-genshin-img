@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Random Image API</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(30, 30, 30, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
+            --text-secondary: #cbd5e0;
+            --accent-color: #90cdf4;
+            --tag-bg: rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #1a1a1a;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        #bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        #default-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            z-index: 1;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #glitch-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0; 
+        }
+
+        #static-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.6s ease-in; 
+        }
+
+        .float-btn {
+            position: fixed;
+            top: 25px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            height: 44px;
+            border-radius: 12px;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .float-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        #ui-toggle-btn {
+            right: 25px;
+            width: 44px;
+        }
+
+        #ui-toggle-btn.is-active {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        #bg-refresh-btn {
+            left: 25px;
+            min-width: 44px;
+            padding: 0;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        #bg-refresh-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0 14px;
+            width: auto;
+            font-size: 0.9rem;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        #bg-refresh-btn:hover:not(:disabled) .icon-svg {
+            transform: rotate(180deg);
+        }
+
+        .icon-svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transition: transform 0.5s ease;
+        }
+
+        .hamburger {
+            position: relative;
+            width: 20px;
+            height: 16px;
+        }
+
+        .hamburger span {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-color);
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+
+        .hamburger span:nth-child(1) { top: 0; }
+        .hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+        .hamburger span:nth-child(3) { bottom: 0; }
+
+        #ui-toggle-btn.is-active .hamburger span:nth-child(1) {
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        #ui-toggle-btn.is-active .hamburger span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+
+        #ui-toggle-btn.is-active .hamburger span:nth-child(3) {
+            bottom: 50%;
+            transform: translateY(50%) rotate(-45deg);
+        }
+
+        .hint-toast {
+            position: fixed;
+            top: 34px;
+            z-index: 99;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        #hint-left { 
+            left: 80px;
+            transform: translateX(-20px); 
+        }
+        
+        #hint-right { 
+            right: 80px; 
+            transform: translateX(20px); 
+        }
+
+        .hint-visible {
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .container.hidden {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+            pointer-events: none;
+        }
+
+        header { margin-bottom: 1rem; }
+        h1 { font-size: 2.2rem; margin: 0 0 0.5rem 0; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        p.subtitle { color: var(--text-secondary); margin: 0; font-size: 1rem; margin-bottom: 1.5rem; }
+
+        .btn { 
+            display: inline-block; 
+            padding: 12px 28px; 
+            background: rgba(255,255,255,0.15); 
+            border-radius: 30px; 
+            border: 1px solid var(--glass-border); 
+            color: white; 
+            font-weight: bold; 
+            transition: all 0.3s; 
+            text-decoration: none; 
+            backdrop-filter: blur(4px);
+            font-size: 1rem;
+        }
+        .btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            padding: 5px 10px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .toggle-btn:hover { color: #fff; text-decoration: underline; }
+
+        #docs-section {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out, margin-top 0.3s;
+            margin-top: 0;
+        }
+        #docs-section.expanded { max-height: 800px; opacity: 1; margin-top: 2rem; }
+
+        .table-wrapper { 
+            overflow-x: auto; 
+            border-radius: 8px; 
+            background: rgba(0, 0, 0, 0.3); 
+            text-align: left;
+            border-top: 1px solid var(--glass-border);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        th { background-color: rgba(0, 0, 0, 0.4); font-weight: 600; color: var(--accent-color); white-space: nowrap; }
+        tr:last-child td { border-bottom: none; }
+        code { background: var(--tag-bg); padding: 2px 6px; border-radius: 4px; font-family: Consolas, Monaco, monospace; color: #ffcb6b; }
+        .tag { display: inline-block; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; }
+        .tag-opt { background: #2f855a; color: white; }
+        .tag-tip { color: #90cdf4; font-size: 0.85em; display: block; margin-top: 4px; }
+        .tag-warn { color: #fc8181; font-size: 0.85em; display: block; margin-top: 4px; }
+
+        footer { 
+            margin-top: 2rem; 
+            text-align: center; 
+            font-size: 0.8rem; 
+            color: var(--text-secondary); 
+            border-top: 1px solid transparent;
+            padding-top: 1rem;
+        }
+        a { color: var(--accent-color); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: #fff; text-decoration: underline; }
+
+        .effect-hardcore {
+            --gap-horizontal: 40px; --gap-vertical: 15px; --time-anim: 0.8s; --delay-anim: 0s;
+            --blend-mode-1: none; --blend-mode-2: screen; --blend-mode-3: multiply; --blend-mode-4: overlay; --blend-mode-5: overlay;
+            --blend-color-1: transparent; --blend-color-2: #ff0000; --blend-color-3: #00ffea; --blend-color-4: #0000ff; --blend-color-5: #ff00ff;
+        }
+        .glitch { position: relative; width: 100%; height: 100%; overflow: hidden; }
+        .glitch__img { position: absolute; top: calc(-1 * var(--gap-vertical)); left: calc(-1 * var(--gap-horizontal)); width: calc(100% + var(--gap-horizontal) * 2); height: calc(100% + var(--gap-vertical) * 2); background-color: var(--blend-color-1); background-size: cover; background-position: center; transform: translate3d(0,0,0); background-blend-mode: var(--blend-mode-1); }
+        .glitch--animate .glitch__img { animation-duration: var(--time-anim); animation-delay: var(--delay-anim); animation-timing-function: step-end; animation-iteration-count: infinite; }
+        .glitch--animate .glitch__img:first-child { animation-name: glitch-anim-1; opacity: 1; }
+        .glitch--animate .glitch__img:nth-child(2) { opacity: 0.8; background-color: var(--blend-color-2); background-blend-mode: var(--blend-mode-2); animation-name: glitch-anim-2; }
+        .glitch--animate .glitch__img:nth-child(3) { opacity: 0.8; background-color: var(--blend-color-3); background-blend-mode: var(--blend-mode-3); animation-name: glitch-anim-3; }
+        .glitch--animate .glitch__img:nth-child(4) { opacity: 0.8; background-color: var(--blend-color-4); background-blend-mode: var(--blend-mode-4); animation-name: glitch-anim-4; }
+        .glitch--animate .glitch__img:nth-child(5) { opacity: 0.8; background-color: var(--blend-color-5); background-blend-mode: var(--blend-mode-5); animation-name: glitch-anim-flash; }
+
+        @keyframes glitch-anim-1 {
+            0% { transform: translate3d(var(--gap-horizontal),0,0) scale3d(-1,-1,1); clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); }
+            10% { transform: translate3d(calc(-1 * var(--gap-horizontal)),0,0) scale3d(1.1,1.1,1); clip-path: polygon(0 15%, 100% 15%, 100% 15%, 0 15%); }
+            20% { transform: translate3d(0,0,0) scale3d(0.9,0.9,1); clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%); }
+            30% { transform: translate3d(0,calc(-1 * var(--gap-vertical)),0) scale3d(1,1,1); clip-path: polygon(0 1%, 100% 1%, 100% 2%, 0 2%); }
+            40% { transform: translate3d(0,0,0) scale3d(1.2,1.2,1); clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%); }
+            50% { transform: translate3d(var(--gap-horizontal),0,0) scale3d(1,1,1); clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%); }
+            60% { transform: translate3d(0,0,0) scale3d(1.1,1.1,1); clip-path: polygon(0 50%, 100% 50%, 100% 20%, 0 20%); }
+            70% { transform: translate3d(calc(-1 * var(--gap-horizontal)),0,0); clip-path: polygon(0 70%, 100% 70%, 100% 70%, 0 70%); }
+            80% { transform: translate3d(0,0,0) scale3d(0.9,0.9,1); clip-path: polygon(0 80%, 100% 80%, 100% 80%, 0 80%); }
+            90% { transform: translate3d(0,0,0) scale3d(1,1,1); clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%); }
+            100% { transform: translate3d(0,0,0) scale3d(1,1,1); clip-path: polygon(0 60%, 100% 60%, 100% 65%, 0 65%); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { opacity: 1; transform: translate3d(calc(-1 * var(--gap-horizontal)),0,0); clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%); }
+            15% { transform: translate3d(10px,0,0); clip-path: polygon(0 10%, 100% 10%, 100% 40%, 0 40%); }
+            30% { transform: translate3d(0, 10px, 0); clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%); }
+            45% { transform: translate3d(-10px, 0, 0); clip-path: polygon(0 20%, 100% 20%, 100% 20%, 0 20%); }
+            60% { transform: translate3d(0, 0, 0); clip-path: polygon(0 50%, 100% 50%, 100% 80%, 0 80%); }
+            75% { transform: translate3d(20px, 20px, 0); clip-path: polygon(0 80%, 100% 80%, 100% 90%, 0 90%); }
+            100% { opacity: 1; transform: translate3d(0,0,0); clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%); }
+        }
+        @keyframes glitch-anim-3 {
+            0% { opacity: 1; transform: translate3d(0, calc(-1 * var(--gap-vertical)), 0) scale3d(-1,-1,1); clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%); }
+            25% { transform: translate3d(5px, 0, 0); clip-path: polygon(0 10%, 100% 10%, 100% 30%, 0 30%); }
+            50% { transform: translate3d(0, 5px, 0) scale3d(1.1,1.1,1); clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%); }
+            75% { transform: translate3d(-5px, 0, 0); clip-path: polygon(0 80%, 100% 80%, 100% 90%, 0 90%); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0); clip-path: polygon(0 1%, 100% 1%, 100% 3%, 0 3%); }
+        }
+        @keyframes glitch-anim-4 {
+            0% { transform: translate3d(0,0,0) scale3d(1.2,1.2,1); opacity: 0.5; }
+            20% { transform: translate3d(-20px,0,0); opacity: 0.7; }
+            40% { transform: translate3d(20px,0,0); opacity: 0.3; }
+            60% { transform: translate3d(0,-20px,0); opacity: 0.6; }
+            80% { transform: translate3d(0,20px,0); opacity: 0.4; }
+            100% { transform: translate3d(0,0,0); opacity: 0.5; }
+        }
+        @keyframes glitch-anim-flash {
+            0% { opacity: 0.5; transform: translate3d(var(--gap-horizontal), var(--gap-vertical), 0); }
+            10% { opacity: 0.1; }
+            20% { opacity: 0.8; transform: translate3d(-10px, 10px, 0); }
+            30% { opacity: 0; }
+            40% { opacity: 0.6; }
+            50% { opacity: 0.1; transform: translate3d(20px, -20px, 0); }
+            100% { opacity: 0; transform: translate3d(0, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="bg-wrapper">
+        <div id="default-gradient"></div>
+        <div id="glitch-container" class="effect-hardcore"></div>
+        <div id="static-image"></div>
+    </div>
+
+    <div id="hint-left" class="hint-toast">⬅ 切换壁纸</div>
+    <div id="hint-right" class="hint-toast">隐藏界面 ➡</div>
+
+    <button id="bg-refresh-btn" class="float-btn" title="切换背景">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+    </button>
+
+    <button id="ui-toggle-btn" class="float-btn is-active" title="切换界面显示">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <div class="container" id="main-ui">
+        <header>
+            <h1>Easy Random Image API</h1>
+            <p class="subtitle">基于 Cloudflare Workers 的全功能随机图片服务</p>
+            
+            <a href="/api" class="btn" target="_blank">🎲 随机来一张</a>
+            
+            <br>
+            <button id="toggle-docs" class="toggle-btn" onclick="toggleDocs()">
+                <span>📖 点击查看使用说明</span>
+            </button>
+        </header>
+
+        <section id="docs-section">
+            <div class="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th width="15%">参数</th>
+                      <th width="20%">值</th>
+                      <th>说明</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>cat</strong><br><span class="tag tag-opt">可选</span></td>
+                      <td><code>JSON Key</code></td>
+                      <td>指定分类。<span class="tag-tip">留空则在所有分类中随机抽取。</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>device</strong><br><span class="tag tag-opt">可选</span></td>
+                      <td><code>pc</code><br><code>mobile</code><br><code>invalid</code></td>
+                      <td>
+                        <strong>pc/mobile</strong>: 强制筛选特定设备。<br>
+                        <strong>invalid</strong>: 全池随机模式（混合所有设备图）。<br>
+                        <span class="tag-tip">留空则根据 User-Agent 自动判断。</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>type</strong><br><span class="tag tag-opt">可选</span></td>
+                      <td><code>302</code><br><code>json</code><br><code>(空)</code></td>
+                      <td>
+                        <strong>302</strong>: 跳转到图片真实地址 (默认)。<br>
+                        <strong>json</strong>: 返回包含图片信息、CDN链接、元数据的 JSON。<br>
+                        <strong>(空)</strong>: 直接返回图片二进制流。
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>id</strong><br><span class="tag tag-opt">可选</span></td>
+                      <td><code>Integer</code> / <code>String</code></td>
+                      <td>
+                        <strong>数字</strong>: 获取筛选结果中的第 N 张图。<br>
+                        <strong>字符串</strong>: 直接获取指定 Key 的图片 (如 <code>id=miku_01</code>)。
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>not_id</strong><br><span class="tag tag-opt">可选</span></td>
+                      <td><code>String (Key)</code></td>
+                      <td>
+                        传入当前图片的 Key (如 <code>miku_01</code>)。<br>
+                        <span class="tag-tip">API 将确保随机出的下一张图不是这张 (用于去重)。</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>form</strong><br><span class="tag tag-opt">可选</span></td>
+                      <td><code>webp</code> / <code>jpg</code></td>
+                      <td>指定返回格式。系统会自动判断是否需要通过 CDN 转码。</td>
+                    </tr>
+                    <tr>
+                      <td><strong>CDN参数</strong><br><span class="tag tag-opt">透传</span></td>
+                      <td><code>w</code>, <code>h</code>, <code>q</code>...</td>
+                      <td>
+                        支持 <a href="https://wsrv.nl/" target="_blank" style="color:var(--accent-color)">wsrv.nl</a> 的所有处理参数。<br>
+                        例: <code>w=200</code> (宽200), <code>q=75</code> (质量75), <code>fit=cover</code>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer>
+            <p>Powered by <a href="https://workers.cloudflare.com/" target="_blank">Cloudflare Workers</a> &bull; Project by <a href="https://github.com/Cheshire-Nya/easy-random-image-api" target="_blank">Cheshire-Nya</a></p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleDocs() {
+            const section = document.getElementById('docs-section');
+            const btn = document.getElementById('toggle-docs');
+            const span = btn.querySelector('span');
+
+            section.classList.toggle('expanded');
+
+            if (section.classList.contains('expanded')) {
+                span.innerText = "🔼 收起使用说明";
+            } else {
+                span.innerText = "📖 点击查看使用说明";
+            }
+        }
+
+        const uiToggleBtn = document.getElementById('ui-toggle-btn');
+        const mainUI = document.getElementById('main-ui');
+        
+        uiToggleBtn.addEventListener('click', () => {
+            mainUI.classList.toggle('hidden');
+            uiToggleBtn.classList.toggle('is-active');
+        });
+
+        const gradientEl = document.getElementById('default-gradient');
+        const glitchContainer = document.getElementById('glitch-container');
+        const staticImageEl = document.getElementById('static-image');
+        const refreshBtn = document.getElementById('bg-refresh-btn');
+        const refreshIconSVG = `<svg class="icon-svg" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`;
+
+        let currentImgId = null;
+
+        async function switchBackground() {
+            refreshBtn.disabled = true;
+            let timeLeft = 3;
+            refreshBtn.innerHTML = `${timeLeft}s`;
+
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    refreshBtn.innerHTML = `${timeLeft}s`;
+                } else {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+
+            const waitThreeSeconds = new Promise(resolve => setTimeout(resolve, 3000));
+            
+            try {
+                const screenW = Math.ceil(window.innerWidth * window.devicePixelRatio);
+                const screenH = Math.ceil(window.innerHeight * window.devicePixelRatio);
+                
+                let apiUrl = `/api?type=json&w=${screenW}&h=${screenH}&fit=cover&q=75`;
+                if (currentImgId !== null) {
+                    apiUrl += `&not_id=${currentImgId}`;
+                }
+
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error('API Request failed');
+                const data = await res.json();
+                
+                if (data.id) {
+                    currentImgId = data.id;
+                }
+
+                const imgUrl = data.proxyUrl || data.workerUrl;
+
+                const loadImages = new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = imgUrl;
+                    img.onload = () => resolve(imgUrl);
+                    img.onerror = reject;
+                });
+
+                await Promise.all([waitThreeSeconds, loadImages]);
+
+                glitchContainer.innerHTML = ''; 
+                const glitchWrapper = document.createElement('div');
+                glitchWrapper.className = 'glitch glitch--animate';
+                for (let i = 0; i < 5; i++) {
+                    const layer = document.createElement('div');
+                    layer.className = 'glitch__img';
+                    layer.style.backgroundImage = `url('${imgUrl}')`;
+                    glitchWrapper.appendChild(layer);
+                }
+                glitchContainer.appendChild(glitchWrapper);
+
+                glitchContainer.style.display = 'block';
+                glitchContainer.style.opacity = '1';
+
+                staticImageEl.style.opacity = '0';
+                if (gradientEl.style.opacity !== '0') {
+                    gradientEl.style.opacity = '0';
+                }
+
+                setTimeout(() => {
+                    staticImageEl.style.backgroundImage = `url('${imgUrl}')`;
+                }, 800);
+
+                setTimeout(() => {
+                    staticImageEl.style.opacity = '1';
+                }, 2200);
+
+                setTimeout(() => {
+                    glitchContainer.style.display = 'none';
+                    glitchContainer.innerHTML = '';
+                    refreshBtn.disabled = false; 
+                    refreshBtn.innerHTML = refreshIconSVG;
+                }, 3000);
+
+            } catch (e) {
+                console.warn('Background load failed:', e);
+                refreshBtn.innerHTML = "!";
+                setTimeout(() => {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = refreshIconSVG;
+                }, 2000);
+            }
+        }
+
+        refreshBtn.addEventListener('click', switchBackground);
+        window.addEventListener('load', switchBackground);
+
+        window.addEventListener('load', () => {
+            const hintLeft = document.getElementById('hint-left');
+            const hintRight = document.getElementById('hint-right');
+            
+            setTimeout(() => {
+                hintLeft.classList.add('hint-visible');
+                hintRight.classList.add('hint-visible');
+            }, 500);
+
+            setTimeout(() => {
+                hintLeft.classList.remove('hint-visible');
+                hintRight.classList.remove('hint-visible');
+            }, 3000);
+        });
+
+    </script>
+</body>
+</html>
