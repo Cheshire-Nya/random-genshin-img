@@ -195,7 +195,10 @@
     "src": "纳西妲/101533407_p0.jpg",
 	"repo": "default",
     "category": ["二次元","原神","纳西妲"],
-    "device": ["mobile"]
+    "device": ["mobile"],
+	"author": "鸦居",
+	"pid": "101533407",
+	"source": "https://www.pixiv.net/artworks/101533407"
   },
   	"nahida_34": {
     "src": "纳西妲/Nahida_101290312.jpg",
