@@ -1,4 +1,4 @@
-name = "random-image-demo5"
+name = "cheshire-image-api"
 main = "worker.js"
 compatibility_date = "2025-11-25"
 
